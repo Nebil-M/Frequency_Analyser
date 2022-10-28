@@ -7,6 +7,8 @@ def main():
         book = file_object.read()
     print_non_aplha_eng(book)
     print_contractions_eng(book)
+    print_punct(book)
+
 
 def print_non_aplha_eng(text):
     a = SpanishAnalyser(text)
@@ -18,6 +20,12 @@ def print_non_aplha_eng(text):
 def print_contractions_eng(text):
     a = SpanishAnalyser(text)
     non_num = [i for i in a.txt.split() if i.isalpha() == False]
+    print(Counter(non_num))
+
+
+def print_punct(text):
+    a = SpanishAnalyser(text)
+    non_num = [i for i in a.txt if i.isalpha() == False]
     print(Counter(non_num))
 
 
