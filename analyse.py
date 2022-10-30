@@ -30,6 +30,9 @@ class Analyser:
         n = re.compile(r"\d+", re.IGNORECASE)
         self.txt = n.sub('', self.txt)
 
+    def lemmatize_txt(self):
+        return self.txt.split()
+
     def n_common_words(self, n):
         return self.freq.most_common(n)
 
@@ -51,7 +54,7 @@ class EnglishAnalyser(Analyser):
         nlp = spacy.load("en_core_web_sm")
         for doc in nlp.pipe([self.txt], disable=["parser", "ner"]):
             yield_lemma_list = [token.lemma_.strip() for token in doc]
-        lemma_list = [i for i in yield_lemma_list if i and i != '\'s']
+        lemma_list = [i for i in yield_lemma_list if i]
         return lemma_list
 
 
@@ -63,7 +66,7 @@ class FrenchAnalyser(Analyser):
         nlp = spacy.load("fr_core_news_sm")
         for doc in nlp.pipe([self.txt], disable=["parser", "ner"]):
             yield_lemma_list = [token.lemma_.strip() for token in doc]
-        lemma_list = [i for i in yield_lemma_list if i and i != '\'s']
+        lemma_list = [i for i in yield_lemma_list if i]
         return lemma_list
 
 
@@ -75,5 +78,5 @@ class SpanishAnalyser(Analyser):
         nlp = spacy.load("es_core_news_sm")
         for doc in nlp.pipe([self.txt], disable=["parser", "ner"]):
             yield_lemma_list = [token.lemma_.strip() for token in doc]
-        lemma_list = [i for i in yield_lemma_list if i and i != '\'s']
+        lemma_list = [i for i in yield_lemma_list if i]
         return lemma_list
