@@ -23,6 +23,7 @@ class Analyser:
         return self.txt
 
     def remove_punctuation(self, replacement=" "):
+        # Remove all punctuation except Apostrophe(') as to not mess up contractions.
         punctuation = re.compile(r"[!\"#$%&()*+,\-—./:;<=>?@[\\\]^_`{|}~”“¿…«»°¡]+", re.IGNORECASE)
         self.txt = punctuation.sub(replacement, self.txt)
 
@@ -52,9 +53,11 @@ class EnglishAnalyser(Analyser):
 
     def lemmatize_txt(self):
         nlp = spacy.load("en_core_web_sm")
-        for doc in nlp.pipe([self.txt], disable=["parser", "ner"]):
-            yield_lemma_list = [token.lemma_.strip() for token in doc]
-        lemma_list = [i for i in yield_lemma_list if i]
+        lemma_list = []
+        for doc in nlp.pipe(self.txt.split('\n\n'), disable=["parser", "ner"]):
+            for token in doc:
+                if token.lemma_.strip():
+                    lemma_list.append(token.lemma_.strip())
         return lemma_list
 
 
@@ -64,9 +67,11 @@ class FrenchAnalyser(Analyser):
 
     def lemmatize_txt(self):
         nlp = spacy.load("fr_core_news_sm")
-        for doc in nlp.pipe([self.txt], disable=["parser", "ner"]):
-            yield_lemma_list = [token.lemma_.strip() for token in doc]
-        lemma_list = [i for i in yield_lemma_list if i]
+        lemma_list = []
+        for doc in nlp.pipe(self.txt.split('\n\n'), disable=["parser", "ner"]):
+            for token in doc:
+                if token.lemma_.strip():
+                    lemma_list.append(token.lemma_.strip())
         return lemma_list
 
 
@@ -76,7 +81,9 @@ class SpanishAnalyser(Analyser):
 
     def lemmatize_txt(self):
         nlp = spacy.load("es_core_news_sm")
-        for doc in nlp.pipe([self.txt], disable=["parser", "ner"]):
-            yield_lemma_list = [token.lemma_.strip() for token in doc]
-        lemma_list = [i for i in yield_lemma_list if i]
+        lemma_list = []
+        for doc in nlp.pipe(self.txt.split('\n\n'), disable=["parser", "ner"]):
+            for token in doc:
+                if token.lemma_.strip():
+                    lemma_list.append(token.lemma_.strip())
         return lemma_list
