@@ -3,7 +3,7 @@ from collections import Counter
 
 
 def main():
-    with open("Texts/ENG/test.txt", encoding='utf-8') as file_object:
+    with open("Texts/Eng/test.txt", encoding='utf-8') as file_object:
         book = file_object.read()
     print_non_aplha_eng(book)
     print_contractions_eng(book)

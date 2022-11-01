@@ -13,8 +13,9 @@ class Analyser:
 
         self.word_list = self.lemmatize_txt()
         self.freq = Counter(self.word_list)
+        self.total_words = sum(self.freq.values())
         self.unique_lemmas = len(self.freq.keys())
-        self.total_words = self.freq.total()
+        
 
         self.unique_lemma_freq_list = sorted(self.freq.items(), key=lambda item: item[1], reverse=True)
         self.unique_lemma_list = [i[0] for i in self.unique_lemma_freq_list]
