@@ -16,7 +16,6 @@ class Analyser:
         self.total_words = sum(self.freq.values())
         self.unique_lemmas = len(self.freq.keys())
         
-
         self.unique_lemma_freq_list = sorted(self.freq.items(), key=lambda item: item[1], reverse=True)
         self.unique_lemma_list = [i[0] for i in self.unique_lemma_freq_list]
 
