@@ -5,3 +5,4 @@ def timing(func):
     print(timeit.timeit(func, number=1))
 
 
+

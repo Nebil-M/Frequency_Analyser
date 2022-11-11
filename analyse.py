@@ -79,7 +79,20 @@ class SpanishAnalyser(Analyser):
     def __init__(self, txt: str):
         super().__init__(txt)
 
+    # Seperates el and other words but possibly slower
     def lemmatize_txt(self):
+        nlp = spacy.load("es_core_news_sm")
+        lemma_list = []
+        for doc in nlp.pipe(self.txt.split('\n\n'), disable=["parser", "ner"]):
+            for token in doc:
+                token = token.lemma_.strip().split()
+                if token:
+                    for i in token:
+                        lemma_list.append(i)
+        return lemma_list
+
+    # before fix
+    def lemmatize_txt1(self):
         nlp = spacy.load("es_core_news_sm")
         lemma_list = []
         for doc in nlp.pipe(self.txt.split('\n\n'), disable=["parser", "ner"]):
