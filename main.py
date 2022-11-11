@@ -11,11 +11,12 @@ def corpus_files(lang):
 
   
 def main():
-    book = corpus_files("ES")
-    a = SpanishAnalyser(book)
+    book = corpus_files("Eng")
+    a = EnglishAnalyser(book)
     print(a.unique_lemma_freq_list[:100])
     print(a.unique_lemmas, a.total_words)
     print(len((a.n_freq_lemmas(1))))
+    print(a.word_coverage(2553))
 
 
 if __name__ == "__main__":
