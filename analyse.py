@@ -24,7 +24,7 @@ class Analyser:
 
     def remove_punctuation(self, replacement=" "):
         # Remove all punctuation except Apostrophe(') as to not mess up contractions.
-        punctuation = re.compile(r"[!\"#$%&()*+,\-—./:;<=>?@[\\\]^_`{|}~”“¿…«»°¡]+", re.IGNORECASE)
+        punctuation = re.compile(r"[!\"#$%&()*+,\-—./:;<=>?@[\\\]^_`{|}~”“¿…«»°¡™©]+", re.IGNORECASE)
         self.txt = punctuation.sub(replacement, self.txt)
 
     def remove_number(self):
