@@ -46,6 +46,17 @@ class Analyser:
     def n_freq_lemmas(self, upper, lower=0):
         return [i for i in self.unique_lemma_freq_list if lower <= i[1] <= upper]
 
+    def percentage_to_required_lemmas(self, percentage):
+        number_of_words = (percentage/100) * self.total_words
+        required_lemmas = 0
+        sum_of_lemmas = 0
+        for lemma in self.unique_lemma_freq_list:
+            if number_of_words <= sum_of_lemmas:
+                break
+            sum_of_lemmas += lemma[1]
+            required_lemmas += 1
+        return required_lemmas
+
 
 class EnglishAnalyser(Analyser):
     def __init__(self, txt: str):
