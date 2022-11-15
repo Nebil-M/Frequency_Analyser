@@ -1,0 +1,4 @@
+unconjugated verb "parlèrent" in FR in: a.n_freq_lemmas(index,index-1)[:10]
+
+make function that takes percentage and returns the number of words needed to reach it. 
+
