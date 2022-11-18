@@ -15,7 +15,7 @@ class Analyser:
         self.freq = Counter(self.word_list)
         self.total_words = sum(self.freq.values())
         self.unique_lemmas = len(self.freq.keys())
-        
+
         self.unique_lemma_freq_list = sorted(self.freq.items(), key=lambda item: item[1], reverse=True)
         self.unique_lemma_list = [i[0] for i in self.unique_lemma_freq_list]
 
@@ -47,7 +47,7 @@ class Analyser:
         return [i for i in self.unique_lemma_freq_list if lower <= i[1] <= upper]
 
     def percentage_to_required_lemmas(self, percentage):
-        number_of_words = (percentage/100) * self.total_words
+        number_of_words = (percentage / 100) * self.total_words
         required_lemmas = 0
         sum_of_lemmas = 0
         for lemma in self.unique_lemma_freq_list:
@@ -103,7 +103,7 @@ class SpanishAnalyser(Analyser):
         return lemma_list
 
     # before fix
-    def lemmatize_txt1(self):
+    def lemmatize_txt_prefix(self):
         nlp = spacy.load("es_core_news_sm")
         lemma_list = []
         for doc in nlp.pipe(self.txt.split('\n\n'), disable=["parser", "ner"]):

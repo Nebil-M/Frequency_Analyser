@@ -1,4 +1,10 @@
 unconjugated verb "parlèrent" in FR in: a.n_freq_lemmas(index,index-1)[:10]
 
-make function that takes percentage and returns the number of words needed to reach it. 
+remove some unremoved gutenberg boilertext in ES and FR corpura.
+
+Make a function to analyse each text indivisually and store it in a pkl for each langauge to get trial levels.
+        Consider organizing texts in batches to get trial levels
+
+Download New corpus from gutenberg more sytematically.
+
 
