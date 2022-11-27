@@ -7,4 +7,6 @@ Make a function to analyse each text indivisually and store it in a pkl for each
 
 Download New corpus from gutenberg more sytematically.
 
+Overload the addition operator to combine corpuses
+
 
