@@ -4,6 +4,11 @@ import pickle
 import re
 import os
 
+def open_book(filedir):
+    with open(filedir, 'r', encoding="utf-8") as file:
+        text = file.read()
+    return text
+
 
 def timing(func):
     print(timeit.timeit(func, number=1))
