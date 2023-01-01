@@ -1,5 +1,5 @@
 from analyse import *
-from io_functions_analyse import load, timing
+from io_functions_analyse import load, timing, load_corpus
 
 
 def main():
@@ -15,22 +15,16 @@ def main():
     print("Words for adequate comprehension: ", a.percentage_to_required_lemmas(98))
 
 
-def info(a):
-    coverage = 5000
-    print("Unique lemmas:", a.unique_lemmas, ", Total words:", a.total_words)
-    print(f"coverage of {coverage} words:", a.word_coverage(coverage))
-    print("Words for adequate comprehension: ", a.percentage_to_required_lemmas(98))
-
 
 if __name__ == "__main__":
     # timing(main)
-    e = load("Eng")
-    f = load("FR")
-    es = load("ES")
+    e = load_corpus("Eng")
+    f = load_corpus("FR")
+    es = load_corpus("ES")
 
     print("English:")
-    info(e)
+    print(e.info())
     print("\nSpanish:")
-    info(es)
+    print(es.info())
     print("\nFrench:")
-    info(f)
+    print(f.info())

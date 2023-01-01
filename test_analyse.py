@@ -4,28 +4,31 @@ from io_functions_analyse import *
 
 
 def main():
-    book = corpus_files("FR")
-    print_non_aplha_eng(book)
-    #print_contractions_eng(book)
-    print_punct(book)
+    name = 'Eng/18 eng'
+    print_non_aplha(name)
+    print_punct(name)
+    #print_contractions(name)
 
 
-def print_non_aplha_eng(text):
-    a = load('FR')
+def print_non_aplha(name):
+    print('i for i in a.unique_lemma_freq_list if i[0].isalpha() == False')
+    a = load(name)
     non_num = [i for i in a.unique_lemma_freq_list if i[0].isalpha() == False]
     print(non_num)
     print(a.unique_lemmas, a.total_words)
     # print(a.unique_lemma_freq_list)
 
 
-def print_contractions_eng(text):
-    a = load('FR')
+def print_contractions(name):
+    print('i for i in a.txt.split() if i.isalpha() == False')
+    a = load(name)
     non_num = [i for i in a.txt.split() if i.isalpha() == False]
     print(Counter(non_num))
 
 
-def print_punct(text):
-    a = load('FR')
+def print_punct(name):
+    print('i for i in a.txt if i.isalpha() == False')
+    a = load(name)
     non_num = [i for i in a.txt if i.isalpha() == False]
     print(Counter(non_num))
 

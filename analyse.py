@@ -3,6 +3,9 @@ import spacy
 from collections import Counter
 
 
+
+
+
 class Analyser:
     def __init__(self, txt: str):
         self.txt = txt.lower()
@@ -21,6 +24,17 @@ class Analyser:
 
     def __str__(self):
         return self.txt
+
+    def __add__(self, other):
+        word_list = self.word_list + other.word_list
+        return ListAnalyser(word_list)
+
+    def info(self, coverage=5000):
+        s = '-----------------\n'
+        s += f'Unique lemmas: {self.unique_lemmas} , Total words: {self.total_words} \n'
+        s += f"coverage of {coverage} words: {self.word_coverage(coverage)} \n"
+        s += f"Words for adequate comprehension: {self.percentage_to_required_lemmas(98)}"
+        return s
 
     def remove_punctuation(self, replacement=" "):
         # Remove all punctuation except Apostrophe(') as to not mess up contractions.
@@ -64,11 +78,11 @@ class EnglishAnalyser(Analyser):
 
     def lemmatize_txt(self):
         nlp = spacy.load("en_core_web_sm")
-        lemma_list = []
+        tokens = []
         for doc in nlp.pipe(self.txt.split('\n\n'), disable=["parser", "ner"]):
-            for token in doc:
-                if token.lemma_.strip():
-                    lemma_list.append(token.lemma_.strip())
+            tokens += list(filter(lambda token: not token.is_space, doc))
+        lemma_list = list(map(lambda token: token.lemma_, tokens))
+
         return lemma_list
 
 
@@ -78,11 +92,11 @@ class FrenchAnalyser(Analyser):
 
     def lemmatize_txt(self):
         nlp = spacy.load("fr_core_news_sm")
-        lemma_list = []
+        tokens = []
         for doc in nlp.pipe(self.txt.split('\n\n'), disable=["parser", "ner"]):
-            for token in doc:
-                if token.lemma_.strip():
-                    lemma_list.append(token.lemma_.strip())
+            tokens += list(filter(lambda token: not token.is_space, doc))
+        lemma_list = list(map(lambda token: token.lemma_, tokens))
+
         return lemma_list
 
 
@@ -90,8 +104,17 @@ class SpanishAnalyser(Analyser):
     def __init__(self, txt: str):
         super().__init__(txt)
 
-    # Seperates el and other words but possibly slower
     def lemmatize_txt(self):
+        nlp = spacy.load("es_core_news_sm")
+        tokens = []
+        for doc in nlp.pipe(self.txt.split('\n\n'), disable=["parser", "ner"]):
+            tokens += list(filter(lambda token: not token.is_space, doc))
+        lemma_list = list(map(lambda token: token.lemma_, tokens))
+
+        return lemma_list
+
+    # Seperates el and other words but possibly wrong
+    def lemmatize_txt_prefix(self):
         nlp = spacy.load("es_core_news_sm")
         lemma_list = []
         for doc in nlp.pipe(self.txt.split('\n\n'), disable=["parser", "ner"]):
@@ -102,12 +125,13 @@ class SpanishAnalyser(Analyser):
                         lemma_list.append(i)
         return lemma_list
 
-    # before fix
-    def lemmatize_txt_prefix(self):
-        nlp = spacy.load("es_core_news_sm")
-        lemma_list = []
-        for doc in nlp.pipe(self.txt.split('\n\n'), disable=["parser", "ner"]):
-            for token in doc:
-                if token.lemma_.strip():
-                    lemma_list.append(token.lemma_.strip())
-        return lemma_list
+# for adding purposes.
+class ListAnalyser(Analyser):
+    def __init__(self, word_list):
+        self.word_list = word_list
+        self.freq = Counter(self.word_list)
+        self.total_words = sum(self.freq.values())
+        self.unique_lemmas = len(self.freq.keys())
+
+        self.unique_lemma_freq_list = sorted(self.freq.items(), key=lambda item: item[1], reverse=True)
+        self.unique_lemma_list = [i[0] for i in self.unique_lemma_freq_list]
