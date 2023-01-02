@@ -48,11 +48,12 @@ class Analyser:
     def lemmatize_txt(self):
         return self.txt.split()
 
+    # Not used, get rid of later
     def n_common_words(self, n):
         return self.freq.most_common(n)
 
     def word_coverage(self, coverage: int):
-        coverage_words = self.n_common_words(coverage)
+        coverage_words = self.unique_lemma_freq_list[0:coverage]
         number_coverage_words = sum([word_freq[1] for word_freq in coverage_words])
         coverage_percentage = (number_coverage_words / self.total_words) * 100
         return number_coverage_words, coverage_percentage
