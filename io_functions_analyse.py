@@ -10,6 +10,7 @@ def open_book(file_dir):
         text = file.read()
     return text
 
+
 def timing(func):
     print(timeit.timeit(func, number=1))
 
@@ -22,7 +23,8 @@ def file_text(file_path):
         corpus += text
     return corpus
 
-def all_text(file_path, text = ''):
+
+def all_text(file_path, text=''):
     text = ''
     for file in os.scandir(file_path):
         if file.is_dir():
@@ -31,9 +33,6 @@ def all_text(file_path, text = ''):
             with open(file, 'r', encoding="utf-8") as txt:
                 text += txt.read()
     return text
-
-
-
 
 
 def save(name, obj, path='Data/Analyse_objs/'):
@@ -56,6 +55,13 @@ def save_corpus(file_path, name, lang, path='Data/Analyse_objs'):
     elif lang == 'ES':
         obj = SpanishAnalyser(book)
     save(name, obj, path)
+
+
+def load_path(path):
+    with open(f'{path}', "rb") as in_put:
+        obj = pickle.load(in_put)
+    return obj
+
 
 def load_corpus(name, path='Data/Analyse_objs/'):
     base_analyser = Analyser('')
@@ -84,7 +90,8 @@ def trim(text, check=False):
         if starts.sub('', original) == original:
             print('First trim has failed')
 
-        else: print('First trim successful')
+        else:
+            print('First trim successful')
 
         if endings.sub('', original) == original:
             print('Second trim has failed')
@@ -134,5 +141,3 @@ def trim_file(file_path, overwrite=False):
         trimmed_corp += t_txt
 
     return trimmed_corp
-
-

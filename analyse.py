@@ -1,7 +1,7 @@
 import re
 import spacy
 from collections import Counter
-
+import stanza
 
 
 
@@ -38,7 +38,11 @@ class Analyser:
 
     def remove_punctuation(self, replacement=" "):
         # Remove all punctuation except Apostrophe(') as to not mess up contractions.
-        punctuation = re.compile(r"[!\"#$%&()*+,\-—./:;<=>?@[\\\]^_`{|}~”“¿…«»°¡™©]+", re.IGNORECASE)
+        # «·×↑\ufeff
+        # │¤£×└──────┘•–––↑└───┘§¤¤¾┌───┐║‒┼£·→┌──────┐▼★†¶−−−−−−−−−├──────┤
+        punctuation = re.compile(r"[!\"#$%&()*+,\-—./:;<=>?@[\\\]^_`{|}~”“¿…«»°¡™©"
+                                 r"·×↑\ufeff│¤£×└──────┘•–––↑└───┘§¤¤¾┌───┐║‒┼£·→┌──────┐▼★†¶−−−−−−−−−├──────┤]+",
+                                 re.IGNORECASE)
         self.txt = punctuation.sub(replacement, self.txt)
 
     def remove_number(self):
@@ -136,3 +140,19 @@ class ListAnalyser(Analyser):
 
         self.unique_lemma_freq_list = sorted(self.freq.items(), key=lambda item: item[1], reverse=True)
         self.unique_lemma_list = [i[0] for i in self.unique_lemma_freq_list]
+
+
+
+# Test
+class FrenchAnalyser2(Analyser):
+    def __init__(self, txt: str):
+        super().__init__(txt)
+
+    def lemmatize_txt(self):
+        nlp = stanza.Pipeline(lang='fr', processors='tokenize,mwt,pos,lemma', download_method=None)
+        doc = nlp(self.txt)
+        lemmas_list = []
+        for sentence in doc.sentences:
+            for word in sentence.words:
+                lemmas_list.append(word.lemma)
+        return lemmas_list
