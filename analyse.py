@@ -1,15 +1,36 @@
 import re
-import spacy
 from collections import Counter
 import stanza
 
 
-
-
 class Analyser:
-    def __init__(self, txt: str):
+    def __init__(self, txt: str = ''):
         self.txt = txt.lower()
         self.original_text = txt
+
+        self.doc = None
+        self.word_list = []
+        self.freq = {}
+        self.total_words = 1
+        self.unique_lemmas = 0
+
+        self.unique_lemma_freq_list = []
+        self.unique_lemma_list = []
+
+    def __str__(self):
+        return self.txt
+
+    def __add__(self, other):
+        analyser = eval(type(other).__name__)
+        a = analyser(self.original_text + other.original_text)
+        a.txt = self.txt + other.txt
+        a.reanalyse(self.word_list, other.word_list)
+        return a
+
+    def analyse(self, txt=None):
+        if txt:
+            self.txt = txt.lower()
+            self.original_text = txt
 
         self.remove_punctuation()
         self.remove_number()
@@ -22,12 +43,22 @@ class Analyser:
         self.unique_lemma_freq_list = sorted(self.freq.items(), key=lambda item: item[1], reverse=True)
         self.unique_lemma_list = [i[0] for i in self.unique_lemma_freq_list]
 
-    def __str__(self):
-        return self.txt
+    def reanalyse(self, *word_lists):
+        self.word_list = []
+        for word_list in word_lists:
+            self.word_list += word_list
 
-    def __add__(self, other):
-        word_list = self.word_list + other.word_list
-        return ListAnalyser(word_list)
+        self.freq = Counter(self.word_list)
+        self.total_words = sum(self.freq.values())
+        self.unique_lemmas = len(self.freq.keys())
+
+        self.unique_lemma_freq_list = sorted(self.freq.items(), key=lambda item: item[1], reverse=True)
+        self.unique_lemma_list = [i[0] for i in self.unique_lemma_freq_list]
+
+    def relemmatize(self):
+        if self.doc:
+            lemmas_list = list(map(lambda w: w.lemma if w.lemma else w.text, self.doc.iter_words()))
+            return lemmas_list
 
     def info(self, coverage=5000):
         s = '-----------------\n'
@@ -38,10 +69,8 @@ class Analyser:
 
     def remove_punctuation(self, replacement=" "):
         # Remove all punctuation except Apostrophe(') as to not mess up contractions.
-        # «·×↑\ufeff
-        # │¤£×└──────┘•–––↑└───┘§¤¤¾┌───┐║‒┼£·→┌──────┐▼★†¶−−−−−−−−−├──────┤
         punctuation = re.compile(r"[!\"#$%&()*+,\-—./:;<=>?@[\\\]^_`{|}~”“¿…«»°¡™©"
-                                 r"·×↑\ufeff│¤£×└──────┘•–––↑└───┘§¤¤¾┌───┐║‒┼£·→┌──────┐▼★†¶−−−−−−−−−├──────┤]+",
+                                 r"\ufeff·×↑┤†│┌★─║⁠┘→§¤└├¶▼–¾•┐‒£┼−]+",
                                  re.IGNORECASE)
         self.txt = punctuation.sub(replacement, self.txt)
 
@@ -51,10 +80,6 @@ class Analyser:
 
     def lemmatize_txt(self):
         return self.txt.split()
-
-    # Not used, get rid of later
-    def n_common_words(self, n):
-        return self.freq.most_common(n)
 
     def word_coverage(self, coverage: int):
         coverage_words = self.unique_lemma_freq_list[0:coverage]
@@ -82,13 +107,10 @@ class EnglishAnalyser(Analyser):
         super().__init__(txt)
 
     def lemmatize_txt(self):
-        nlp = spacy.load("en_core_web_sm")
-        tokens = []
-        for doc in nlp.pipe(self.txt.split('\n\n'), disable=["parser", "ner"]):
-            tokens += list(filter(lambda token: not token.is_space, doc))
-        lemma_list = list(map(lambda token: token.lemma_, tokens))
-
-        return lemma_list
+        nlp = stanza.Pipeline(lang='en', processors='tokenize,mwt,pos,lemma', download_method=None)
+        self.doc = nlp(self.txt)
+        lemmas_list = list(map(lambda w: w.lemma if w.lemma else w.text, self.doc.iter_words()))
+        return lemmas_list
 
 
 class FrenchAnalyser(Analyser):
@@ -96,13 +118,10 @@ class FrenchAnalyser(Analyser):
         super().__init__(txt)
 
     def lemmatize_txt(self):
-        nlp = spacy.load("fr_core_news_sm")
-        tokens = []
-        for doc in nlp.pipe(self.txt.split('\n\n'), disable=["parser", "ner"]):
-            tokens += list(filter(lambda token: not token.is_space, doc))
-        lemma_list = list(map(lambda token: token.lemma_, tokens))
-
-        return lemma_list
+        nlp = stanza.Pipeline(lang='fr', processors='tokenize,mwt,pos,lemma', download_method=None)
+        self.doc = nlp(self.txt)
+        lemmas_list = list(map(lambda w: w.lemma if w.lemma else w.text, self.doc.iter_words()))
+        return lemmas_list
 
 
 class SpanishAnalyser(Analyser):
@@ -110,49 +129,7 @@ class SpanishAnalyser(Analyser):
         super().__init__(txt)
 
     def lemmatize_txt(self):
-        nlp = spacy.load("es_core_news_sm")
-        tokens = []
-        for doc in nlp.pipe(self.txt.split('\n\n'), disable=["parser", "ner"]):
-            tokens += list(filter(lambda token: not token.is_space, doc))
-        lemma_list = list(map(lambda token: token.lemma_, tokens))
-
-        return lemma_list
-
-    # Seperates el and other words but possibly wrong
-    def lemmatize_txt_prefix(self):
-        nlp = spacy.load("es_core_news_sm")
-        lemma_list = []
-        for doc in nlp.pipe(self.txt.split('\n\n'), disable=["parser", "ner"]):
-            for token in doc:
-                token = token.lemma_.strip().split()
-                if token:
-                    for i in token:
-                        lemma_list.append(i)
-        return lemma_list
-
-# for adding purposes.
-class ListAnalyser(Analyser):
-    def __init__(self, word_list):
-        self.word_list = word_list
-        self.freq = Counter(self.word_list)
-        self.total_words = sum(self.freq.values())
-        self.unique_lemmas = len(self.freq.keys())
-
-        self.unique_lemma_freq_list = sorted(self.freq.items(), key=lambda item: item[1], reverse=True)
-        self.unique_lemma_list = [i[0] for i in self.unique_lemma_freq_list]
-
-
-
-# Test
-class FrenchAnalyser2(Analyser):
-    def __init__(self, txt: str):
-        super().__init__(txt)
-
-    def lemmatize_txt(self):
-        nlp = stanza.Pipeline(lang='fr', processors='tokenize,mwt,pos,lemma', download_method=None)
-        doc = nlp(self.txt)
-        lemmas_list = []
-        for sentence in doc.sentences:
-            for word in sentence.words:
-                lemmas_list.append(word.lemma)
+        nlp = stanza.Pipeline(lang='es', processors='tokenize,mwt,pos,lemma', download_method=None)
+        self.doc = nlp(self.txt)
+        lemmas_list = list(map(lambda w: w.lemma if w.lemma else w.text, self.doc.iter_words()))
         return lemmas_list

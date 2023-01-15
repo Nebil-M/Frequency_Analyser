@@ -3,25 +3,21 @@ import timeit
 import pickle
 import re
 import os
-
-
-def open_book(file_dir):
-    with open(file_dir, 'r', encoding="utf-8") as file:
-        text = file.read()
-    return text
+import cProfile
 
 
 def timing(func):
     print(timeit.timeit(func, number=1))
 
 
-def file_text(file_path):
-    corpus = ""
-    for textfile in os.scandir(file_path):
-        with open(textfile, 'r', encoding="utf-8") as file:
-            text = file.read()
-        corpus += text
-    return corpus
+def profile_graph(*obj, step=10):
+    cProfile.runctx("graph(*obj, step)", globals(), locals())
+
+
+def open_book(file_dir):
+    with open(file_dir, 'r', encoding="utf-8") as file:
+        text = file.read()
+    return text
 
 
 def all_text(file_path, text=''):
@@ -40,21 +36,21 @@ def save(name, obj, path='Data/Analyse_objs/'):
         pickle.dump(obj, output, pickle.HIGHEST_PROTOCOL)
 
 
+def save_all(cls, folder_path, destination='Data/Analyse_objs/'):
+    des_name = os.path.basename(folder_path)
+    des = destination + des_name + '/'
+    os.mkdir(des)
+    for folder in os.scandir(folder_path):
+        text = all_text(folder)
+        obj = cls(text)
+        obj.analyse()
+        save(folder.name, obj, des)
+
+
 def load(name, path='Data/Analyse_objs/'):
     with open(f'{path}{name}.pkl', "rb") as in_put:
         obj = pickle.load(in_put)
     return obj
-
-
-def save_corpus(file_path, name, lang, path='Data/Analyse_objs'):
-    book = file_text(file_path)
-    if lang == 'FR':
-        obj = FrenchAnalyser(book)
-    elif lang == 'Eng':
-        obj = EnglishAnalyser(book)
-    elif lang == 'ES':
-        obj = SpanishAnalyser(book)
-    save(name, obj, path)
 
 
 def load_path(path):
@@ -63,10 +59,9 @@ def load_path(path):
     return obj
 
 
-def load_corpus(name, path='Data/Analyse_objs/'):
+def load_corpus(path='Data/Analyse_objs/'):
     base_analyser = Analyser('')
-    file_path = f'{path}/{name}'
-    for file in os.scandir(file_path):
+    for file in os.scandir(path):
         with open(file, "rb") as in_put:
             obj = pickle.load(in_put)
             base_analyser += obj

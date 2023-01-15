@@ -1,28 +1,29 @@
-import io_functions_analyse as fi
 import matplotlib.pyplot as plt
 import numpy as np
-import pickle
-from io_functions_analyse import load, timing, load_corpus
-import cProfile
+from io_functions_analyse import*
 
 # MATPLOTLIB
-fig, ax = plt.subplots()
-
-e = load_corpus('Eng')
-
-
-def graph(obj, step=100):
-    x = np.arange(0, obj.unique_lemmas, step)
-    y = list(map(lambda i: obj.word_coverage(i)[1], x))
-    plt.xscale("log")
-    a = ax.plot(x, y)
+fr = load_corpus('Data/Analyse_objs/FR')
+es = load_corpus('Data/Analyse_objs/ES')
+en = load_corpus('Data/Analyse_objs/Eng')
 
 
-def profile_graph(obj, step=10):
-    cProfile.runctx("graph(obj, step)", globals(), locals())
+def graph(*objs, step=100, title=None, log=True):
+    fig, ax = plt.subplots()
+
+    ax.set_xscale("log") if log else None
+    ax.set_xlabel('Unique Lemmas', fontsize=12)
+    ax.set_ylabel('Percent Coverage', fontsize=12)
+    ax.set_title(title, fontsize=20)
+    ax.grid(True)
+
+    for obj in objs:
+        x = np.arange(0, obj.unique_lemmas, step)
+        y = list(map(lambda i: obj.word_coverage(i)[1], x))
+        ax.plot(x, y, label=str(type(obj).__name__)[-9::-1][::-1])
+    ax.legend()
 
 
-timing(lambda: graph(e, 1))
+timing(lambda: graph(fr, es, en, step=1, title="Percent coverage vs Unique lemmas", log=True))
 
 plt.show()
-# profile_graph(e)

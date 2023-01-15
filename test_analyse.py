@@ -4,33 +4,43 @@ from io_functions_analyse import *
 
 
 def main():
-    name = 'Eng/18 eng'
-    print_non_aplha(name)
-    print_punct(name)
-    #print_contractions(name)
+    a = load_path('Data/Test/stanza_fr_20.pkl')
+    print_contractions(a)
 
+def print_non_words(a):
+    for w in a.unique_lemma_freq_list:
+        if not w[0]:
+            print(w)
 
-def print_non_aplha(name):
+def print_non_alpha(a):
     print('i for i in a.unique_lemma_freq_list if i[0].isalpha() == False')
-    a = load(name)
     non_num = [i for i in a.unique_lemma_freq_list if i[0].isalpha() == False]
     print(non_num)
     print(a.unique_lemmas, a.total_words)
     # print(a.unique_lemma_freq_list)
 
 
-def print_contractions(name):
+def print_contractions(a):
     print('i for i in a.txt.split() if i.isalpha() == False')
-    a = load(name)
     non_num = [i for i in a.txt.split() if i.isalpha() == False]
     print(Counter(non_num))
 
 
-def print_punct(name):
+def print_punct(a):
     print('i for i in a.txt if i.isalpha() == False')
-    a = load(name)
     non_num = [i for i in a.txt if i.isalpha() == False]
     print(Counter(non_num))
+
+def check_unique_non_alpha(s):
+    for i in s:
+        if i.isalpha():
+            return True
+    return False
+
+def print_unique_non_alpha(a):
+    a.remove_number()
+    b = set([w for w in a.txt.split() if not check_unique_non_alpha(w)])
+    print(b)
 
 
 if __name__ == "__main__":
