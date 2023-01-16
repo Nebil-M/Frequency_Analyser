@@ -4,8 +4,7 @@ from io_functions_analyse import *
 
 
 def main():
-    a = load_path('Data/Test/stanza_fr_20.pkl')
-    print_contractions(a)
+    ...
 
 def print_non_words(a):
     for w in a.unique_lemma_freq_list:

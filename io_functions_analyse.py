@@ -31,12 +31,12 @@ def all_text(file_path, text=''):
     return text
 
 
-def save(name, obj, path='Data/Analyse_objs/'):
+def save(name, obj, path):
     with open(f'{path}{name}.pkl', "wb") as output:
         pickle.dump(obj, output, pickle.HIGHEST_PROTOCOL)
 
 
-def save_all(cls, folder_path, destination='Data/Analyse_objs/'):
+def save_all(cls, folder_path, destination):
     des_name = os.path.basename(folder_path)
     des = destination + des_name + '/'
     os.mkdir(des)
@@ -47,7 +47,7 @@ def save_all(cls, folder_path, destination='Data/Analyse_objs/'):
         save(folder.name, obj, des)
 
 
-def load(name, path='Data/Analyse_objs/'):
+def load(name, path):
     with open(f'{path}{name}.pkl', "rb") as in_put:
         obj = pickle.load(in_put)
     return obj
@@ -59,7 +59,7 @@ def load_path(path):
     return obj
 
 
-def load_corpus(path='Data/Analyse_objs/'):
+def load_corpus(path):
     base_analyser = Analyser('')
     for file in os.scandir(path):
         with open(file, "rb") as in_put:

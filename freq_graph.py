@@ -3,10 +3,6 @@ import numpy as np
 from io_functions_analyse import*
 
 # MATPLOTLIB
-fr = load_corpus('Data/Analyse_objs/FR')
-es = load_corpus('Data/Analyse_objs/ES')
-en = load_corpus('Data/Analyse_objs/Eng')
-
 
 def graph(*objs, step=100, title=None, log=True):
     fig, ax = plt.subplots()
