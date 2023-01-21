@@ -66,14 +66,19 @@ def save_all(cls, folder_path, destination):
         save(folder.name, obj, des)
 
 
-def load(name, path):
-    with open(f'{path}{name}.pkl', "rb") as in_put:
-        obj = pickle.load(in_put)
-    return obj
+def all_load_map(func, folder_path, pass_file=False, max_depth=9999, depth=1):
+    for file in os.scandir(folder_path):
+        if file.is_dir() and depth <= max_depth:
+            depth += 1
+            all_load_map(func, file, pass_file, max_depth, depth)
+        else:
+            obj = load_path(file)
+            func(obj, file) if pass_file else func(obj)
+
 
 
 def load_path(path):
-    with open(f'{path}', "rb") as in_put:
+    with open(path, "rb") as in_put:
         obj = pickle.load(in_put)
     return obj
 
