@@ -29,10 +29,6 @@ def timing(func):
     print(timeit.timeit(func, number=1))
 
 
-def profile_graph(*obj, step=10):
-    cProfile.runctx("graph(*obj, step)", globals(), locals())
-
-
 def open_book(file_dir):
     with open(file_dir, 'r', encoding="utf-8") as file:
         text = file.read()
@@ -74,7 +70,6 @@ def all_load_map(func, folder_path, pass_file=False, max_depth=9999, depth=1):
         else:
             obj = load_path(file)
             func(obj, file) if pass_file else func(obj)
-
 
 
 def load_path(path):
